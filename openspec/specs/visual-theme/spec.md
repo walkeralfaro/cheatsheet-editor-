@@ -28,7 +28,7 @@ The dark theme SHALL use a stone-based warm dark color palette that provides suf
 
 #### Scenario: Text remains readable in dark mode
 - **WHEN** dark mode is active
-- **THEN** text is light-colored (`#fafaf9`) against a dark background (`#0c0a09`) with adequate contrast ratios
+- **THEN** text is light-colored (`#f8fafc`) against a dark background (`#020617`) with adequate contrast ratios
 
 ### Requirement: Light theme uses warm neutral palette
 The light theme SHALL use a stone-based warm neutral palette with no cool (blue/green) undertones.
@@ -42,7 +42,7 @@ The system SHALL set a `background-color` inline style on `<html>` synchronously
 
 #### Scenario: Dark background set inline before paint
 - **WHEN** the page loads with dark mode enabled
-- **THEN** `document.documentElement.style.backgroundColor` SHALL be set to "#0c0a09" before the first paint
+- **THEN** `document.documentElement.style.backgroundColor` SHALL be set to "#020617" before the first paint
 
 #### Scenario: Light background set inline before paint
 - **WHEN** the page loads with light mode or no saved preference
@@ -54,3 +54,14 @@ Every UI element SHALL use theme-aware background colors (`bg-surface`, `bg-surf
 #### Scenario: No hardcoded whites in dark mode
 - **WHEN** dark mode is active
 - **THEN** no element renders with `background-color: white` (all backgrounds are dark-themed)
+
+### Requirement: Footer and main container use themed background
+The `<main>` element and mobile `<footer>` SHALL include `bg-surface` so the dark theme variable cascades properly.
+
+#### Scenario: Mobile footer renders dark background in dark mode
+- **WHEN** dark mode is active on mobile viewport
+- **THEN** the footer background SHALL be `--color-surface` (not transparent)
+
+#### Scenario: Main container provides stable backdrop
+- **WHEN** the page loads in any theme
+- **THEN** the `<main>` element SHALL have `bg-surface` so content area does not flash the page-level background
