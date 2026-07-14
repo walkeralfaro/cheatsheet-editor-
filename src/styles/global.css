@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@variant dark (&.dark);
+
+@theme {
+  --color-surface: #fafaf9;
+  --color-surface-alt: #f5f5f4;
+  --color-border: #e7e5e4;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-text: #1c1917;
+  --color-text-muted: #78716c;
+  --color-key-bg: #e7e5e4;
+  --color-key-text: #44403c;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.dark {
+  --color-surface: #0c0a09;
+  --color-surface-alt: #1c1917;
+  --color-border: #292524;
+  --color-primary: #3b82f6;
+  --color-primary-hover: #60a5fa;
+  --color-text: #fafaf9;
+  --color-text-muted: #a8a29e;
+  --color-key-bg: #44403c;
+  --color-key-text: #e7e5e4;
+}
+
+
+
+@media print {
+  @page {
+    size: portrait;
+    margin: 1cm;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .print-area {
+    position: static;
+    overflow: visible;
+  }
+
+  .print-area .grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .print-area table {
+    table-layout: auto !important;
+    width: 100% !important;
+  }
+
+  .print-area th,
+  .print-area td {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    font-size: 0.75rem;
+    padding: 0.375rem 0.5rem !important;
+  }
+
+  .print-area thead th {
+    font-size: 0.625rem;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-area h2 {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+
+  .print-area .grid > div {
+    break-inside: avoid;
+  }
+}
