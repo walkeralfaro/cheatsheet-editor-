@@ -1,19 +1,19 @@
 import { useState } from "react";
-import type { CheatsheetAction } from "../lib/types";
+import { useAppStore } from "../store/useAppStore";
 
 interface AddShortcutFormProps {
   sectionId: string;
-  dispatch: React.Dispatch<CheatsheetAction>;
 }
 
-export default function AddShortcutForm({ sectionId, dispatch }: AddShortcutFormProps) {
+export default function AddShortcutForm({ sectionId }: AddShortcutFormProps) {
+  const addShortcut = useAppStore((s) => s.addShortcut);
   const [keys, setKeys] = useState("");
   const [action, setAction] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!keys.trim() || !action.trim()) return;
-    dispatch({ type: "ADD_SHORTCUT", sectionId, keys: keys.trim(), action: action.trim() });
+    addShortcut(sectionId, keys.trim(), action.trim());
     setKeys("");
     setAction("");
   };

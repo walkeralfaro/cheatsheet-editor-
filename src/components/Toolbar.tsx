@@ -1,30 +1,29 @@
-interface ToolbarProps {
-  onToggleSidebar: () => void;
-  onPrint: () => void;
-  editorVisible: boolean;
-  onToggleEditor: () => void;
-  darkMode: boolean;
-  onToggleDark: () => void;
-}
+import { useAppStore } from "../store/useAppStore";
 
-export default function Toolbar({ onToggleSidebar, onPrint, editorVisible, onToggleEditor, darkMode, onToggleDark }: ToolbarProps) {
+export default function Toolbar() {
+  const editorVisible = useAppStore((s) => s.editorVisible);
+  const darkMode = useAppStore((s) => s.darkMode);
+  const toggleEditor = useAppStore((s) => s.toggleEditor);
+  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
+  const toggleDark = useAppStore((s) => s.toggleDark);
+
   return (
     <div className="flex items-center gap-2 border-b border-border px-4 py-2">
       <button
-        onClick={onToggleEditor}
+        onClick={toggleEditor}
         className="cursor-pointer rounded-md border border-border px-3 py-1.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface-alt hover:text-text lg:hidden"
       >
         {editorVisible ? "Hide editor" : "Editor"}
       </button>
       <button
-        onClick={onToggleSidebar}
+        onClick={toggleSidebar}
         className="cursor-pointer rounded-md border border-border px-3 py-1.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
       >
         ☰
       </button>
       <div className="flex-1" />
       <button
-        onClick={onToggleDark}
+        onClick={toggleDark}
         className="cursor-pointer rounded-md border border-border px-3 py-1.5 text-sm text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
         title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
       >
@@ -47,7 +46,7 @@ export default function Toolbar({ onToggleSidebar, onPrint, editorVisible, onTog
         )}
       </button>
       <button
-        onClick={onPrint}
+        onClick={() => window.print()}
         className="cursor-pointer rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
       >
         Print PDF

@@ -1,27 +1,22 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import type { CheatsheetMeta } from "../lib/types";
+import { useAppStore } from "../store/useAppStore";
 
 interface CheatsheetSidebarProps {
-  cheatsheetList: CheatsheetMeta[];
-  activeCheatsheetId: string | null;
-  onSwitch: (id: string) => void;
-  onRename: (id: string, title: string) => void;
-  onDelete: (id: string) => void;
   onNew: () => void;
-  onClose: () => void;
-  isOpen: boolean;
 }
 
-export default function CheatsheetSidebar({
-  cheatsheetList,
-  activeCheatsheetId,
-  onSwitch,
-  onRename,
-  onDelete,
-  onNew,
-  onClose,
-  isOpen,
-}: CheatsheetSidebarProps) {
+export default function CheatsheetSidebar({ onNew }: CheatsheetSidebarProps) {
+  const list = useAppStore((s) => s.list);
+  const activeCheatsheetId = useAppStore((s) => s.activeId);
+  const switchTo = useAppStore((s) => s.switchTo);
+  const rename = useAppStore((s) => s.rename);
+  const remove = useAppStore((s) => s.remove);
+  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
+  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
+  const navigate = useNavigate();
+
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
 
@@ -32,25 +27,35 @@ export default function CheatsheetSidebar({
 
   const handleConfirmRename = () => {
     if (renamingId && renameValue.trim()) {
-      onRename(renamingId, renameValue.trim());
+      rename(renamingId, renameValue.trim());
     }
     setRenamingId(null);
   };
 
+  const handleSwitch = (id: string) => {
+    if (id === activeCheatsheetId) {
+      toggleSidebar();
+      return;
+    }
+    switchTo(id);
+    navigate("/cheatsheet/" + id);
+    toggleSidebar();
+  };
+
   return (
     <>
-      {isOpen && (
-        <div className="fixed inset-0 z-40 bg-black/30" onClick={onClose} />
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 bg-black/30" onClick={toggleSidebar} />
       )}
       <div
         className={`fixed left-0 top-0 z-50 h-full w-72 bg-surface shadow-lg transition-transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="text-sm font-semibold text-text">Cheatsheets</h2>
           <button
-            onClick={onClose}
+            onClick={toggleSidebar}
             className="cursor-pointer text-sm text-text-muted hover:text-text"
           >
             ✕
@@ -58,7 +63,7 @@ export default function CheatsheetSidebar({
         </div>
 
         <div className="flex flex-col gap-1 p-2">
-          {cheatsheetList.map((meta) => (
+          {list.map((meta: CheatsheetMeta) => (
             <div
               key={meta.id}
               className={`group flex items-center gap-2 rounded-md px-3 py-2 text-sm ${
@@ -82,7 +87,7 @@ export default function CheatsheetSidebar({
                 />
               ) : (
                 <button
-                  onClick={() => onSwitch(meta.id)}
+                  onClick={() => handleSwitch(meta.id)}
                   className="flex-1 text-left"
                 >
                   {meta.title}
@@ -96,7 +101,7 @@ export default function CheatsheetSidebar({
                   ✎
                 </button>
                 <button
-                  onClick={() => onDelete(meta.id)}
+                  onClick={() => remove(meta.id)}
                   className="cursor-pointer text-xs text-text-muted hover:text-red-500"
                 >
                   ✕

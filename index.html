@@ -1,7 +1,3 @@
----
-import "../styles/global.css";
----
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -15,7 +11,7 @@ import "../styles/global.css";
       rel="stylesheet"
     />
     <script>
-      (function() {
+      (function () {
         try {
           var theme = localStorage.getItem("theme");
           if (theme === "dark") {
@@ -24,12 +20,13 @@ import "../styles/global.css";
           } else {
             document.documentElement.style.backgroundColor = "#fafaf9";
           }
-        } catch(e) {}
+        } catch (e) {}
       })();
     </script>
     <title>Cheatsheet Editor</title>
   </head>
   <body class="min-h-screen bg-surface text-text font-sans antialiased">
-    <slot />
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

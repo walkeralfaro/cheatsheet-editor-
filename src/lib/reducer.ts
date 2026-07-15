@@ -1,8 +1,7 @@
 import type { Cheatsheet, CheatsheetAction, Section, Shortcut } from "./types";
 
-let nextId = 1;
 function uid(): string {
-  return String(nextId++);
+  return crypto.randomUUID();
 }
 
 export function createEmptyCheatsheet(): Cheatsheet {
@@ -57,7 +56,6 @@ export function cheatsheetReducer(state: Cheatsheet, action: CheatsheetAction): 
       };
 
     case "LOAD":
-      nextId = Date.now();
       return action.cheatsheet;
 
     default:

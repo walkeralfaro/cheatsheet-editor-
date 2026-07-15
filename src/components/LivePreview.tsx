@@ -1,14 +1,15 @@
-import type { Cheatsheet, CheatsheetAction } from "../lib/types";
+import { useAppStore } from "../store/useAppStore";
 import ShortcutCard from "./ShortcutCard";
 
 interface LivePreviewProps {
-  cheatsheet: Cheatsheet;
-  dispatch: React.Dispatch<CheatsheetAction>;
-  activeSectionId: string | null;
   onSectionClick: (sectionId: string) => void;
 }
 
-export default function LivePreview({ cheatsheet, dispatch, activeSectionId, onSectionClick }: LivePreviewProps) {
+export default function LivePreview({ onSectionClick }: LivePreviewProps) {
+  const cheatsheet = useAppStore((s) => (s.activeId ? s.cheatsheets[s.activeId] : null));
+
+  if (!cheatsheet) return null;
+
   if (cheatsheet.sections.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -48,8 +49,6 @@ export default function LivePreview({ cheatsheet, dispatch, activeSectionId, onS
                     <ShortcutCard
                       key={shortcut.id}
                       shortcut={shortcut}
-                      sectionId={section.id}
-                      dispatch={dispatch}
                     />
                   ))}
                 </tbody>

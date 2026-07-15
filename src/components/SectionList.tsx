@@ -1,16 +1,17 @@
 import { useState } from "react";
-import type { Section, CheatsheetAction } from "../lib/types";
+import type { Section } from "../lib/types";
+import { useAppStore } from "../store/useAppStore";
 import ShortcutRow from "./ShortcutRow";
 
 interface SectionListProps {
   sections: Section[];
-  dispatch: React.Dispatch<CheatsheetAction>;
   activeSectionId: string | null;
   onSectionClick: (sectionId: string) => void;
 }
 
-export default function SectionList({ sections, dispatch, activeSectionId, onSectionClick }: SectionListProps) {
+export default function SectionList({ sections, activeSectionId, onSectionClick }: SectionListProps) {
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const removeSection = useAppStore((s) => s.removeSection);
 
   const toggleCollapse = (id: string) => {
     setCollapsed((prev) => {
@@ -57,7 +58,7 @@ export default function SectionList({ sections, dispatch, activeSectionId, onSec
               </button>
               <span className="text-xs text-text-muted">{section.shortcuts.length}</span>
               <button
-                onClick={() => dispatch({ type: "REMOVE_SECTION", sectionId: section.id })}
+                onClick={() => removeSection(section.id)}
                 className="cursor-pointer text-xs text-text-muted transition-colors hover:text-red-500"
               >
                 ✕
@@ -74,7 +75,6 @@ export default function SectionList({ sections, dispatch, activeSectionId, onSec
                       key={shortcut.id}
                       shortcut={shortcut}
                       sectionId={section.id}
-                      dispatch={dispatch}
                     />
                   ))
                 )}

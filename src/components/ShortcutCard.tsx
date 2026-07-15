@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from "react";
-import type { Shortcut, CheatsheetAction } from "../lib/types";
+import type { Shortcut } from "../lib/types";
 import type React from "react";
+import { useAppStore } from "../store/useAppStore";
 
 interface ShortcutCardProps {
   shortcut: Shortcut;
-  sectionId: string;
-  dispatch: React.Dispatch<CheatsheetAction>;
 }
 
-export default function ShortcutCard({ shortcut, sectionId, dispatch }: ShortcutCardProps) {
+export default function ShortcutCard({ shortcut }: ShortcutCardProps) {
+  const updateShortcut = useAppStore((s) => s.updateShortcut);
   const [editingKey, setEditingKey] = useState(false);
   const [editingAction, setEditingAction] = useState(false);
   const [editKeys, setEditKeys] = useState(shortcut.keys);
@@ -40,12 +40,7 @@ export default function ShortcutCard({ shortcut, sectionId, dispatch }: Shortcut
 
   const handleSave = (newKeys: string, newAction: string) => {
     if (!newKeys.trim() || !newAction.trim()) return;
-    dispatch({
-      type: "UPDATE_SHORTCUT",
-      shortcutId: shortcut.id,
-      keys: newKeys.trim(),
-      action: newAction.trim(),
-    });
+    updateShortcut(shortcut.id, newKeys.trim(), newAction.trim());
   };
 
   const handleSaveKey = () => {
