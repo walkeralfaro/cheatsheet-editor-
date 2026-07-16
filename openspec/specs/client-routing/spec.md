@@ -25,9 +25,20 @@ The system SHALL support browser back/forward navigation between cheatsheet rout
 - **THEN** the application navigates to `/cheatsheet/A` and loads cheatsheet A as active
 
 ### Requirement: Unknown routes show a custom 404
-The system SHALL render a styled "Not Found" page for any unmatched client-side route (catch-all `*`), with a link back to the editor (`/editor`) and to the landing (full reload to `/`).
+The system SHALL render a styled "Not Found" page for any unmatched client-side route (catch-all `*`), with a link back to the editor (`/editor`) and to the landing (`/`).
 
 #### Scenario: Unknown path shows 404
 - **WHEN** the user navigates to a path that matches no route (e.g., `/foo`)
 - **THEN** a styled 404 page is shown with links to the editor and the landing
+
+### Requirement: Landing at root serves as the marketing page
+The system SHALL render a marketing/landing page at the root URL `/` as a React component within the SPA, rather than serving a separate static HTML file via a server redirect.
+
+#### Scenario: Root renders Landing component
+- **WHEN** the user navigates to `/`
+- **THEN** the `<Landing />` component is rendered with the same SEO metadata, content, and theme behavior as the previous static landing page
+
+#### Scenario: Catch-all redirect still applies
+- **WHEN** the user navigates to any path other than `/`
+- **THEN** the SPA handles it via the catch-all route, with `/* /index.html 200` as the only Netlify redirect rule
 

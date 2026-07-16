@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type KeyboardEvent } from "react";
 import type { Shortcut } from "../lib/types";
-import type React from "react";
 import { useAppStore } from "../store/useAppStore";
 
 interface ShortcutCardProps {
@@ -78,7 +77,7 @@ export default function ShortcutCard({ shortcut }: ShortcutCardProps) {
     el.style.height = el.scrollHeight + "px";
   };
 
-  const handleKeysKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeysKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (editingAction) {
@@ -90,7 +89,7 @@ export default function ShortcutCard({ shortcut }: ShortcutCardProps) {
     if (e.key === "Escape") handleCancelKey();
   };
 
-  const handleActionKeyDown = (e: React.KeyboardEvent) => {
+  const handleActionKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSaveAction();
