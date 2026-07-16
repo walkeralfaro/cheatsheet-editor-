@@ -4,8 +4,12 @@ function uid(): string {
   return crypto.randomUUID();
 }
 
+export function shortId(): string {
+  return crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+}
+
 export function createEmptyCheatsheet(): Cheatsheet {
-  return { id: crypto.randomUUID(), title: "My Cheatsheet", sections: [] };
+  return { id: shortId(), title: "My Cheatsheet", sections: [] };
 }
 
 export function cheatsheetReducer(state: Cheatsheet, action: CheatsheetAction): Cheatsheet {
@@ -16,6 +20,31 @@ export function cheatsheetReducer(state: Cheatsheet, action: CheatsheetAction): 
     case "ADD_SECTION": {
       const section: Section = { id: uid(), name: action.name, shortcuts: [] };
       return { ...state, sections: [...state.sections, section] };
+    }
+
+    case "RENAME_SECTION":
+      return {
+        ...state,
+        sections: state.sections.map((s) =>
+          s.id === action.sectionId ? { ...s, name: action.name } : s,
+        ),
+      };
+
+    case "REORDER_SECTIONS": {
+      const { fromIndex, toIndex } = action;
+      if (
+        fromIndex === toIndex ||
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= state.sections.length ||
+        toIndex >= state.sections.length
+      ) {
+        return state;
+      }
+      const sections = [...state.sections];
+      const [moved] = sections.splice(fromIndex, 1);
+      sections.splice(toIndex, 0, moved);
+      return { ...state, sections };
     }
 
     case "REMOVE_SECTION":

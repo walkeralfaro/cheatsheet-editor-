@@ -25,6 +25,8 @@ export interface CheatsheetMeta {
 export type CheatsheetAction =
   | { type: "SET_TITLE"; title: string }
   | { type: "ADD_SECTION"; name: string }
+  | { type: "RENAME_SECTION"; sectionId: string; name: string }
+  | { type: "REORDER_SECTIONS"; fromIndex: number; toIndex: number }
   | { type: "REMOVE_SECTION"; sectionId: string }
   | { type: "SET_ACTIVE_SECTION"; sectionId: string }
   | { type: "ADD_SHORTCUT"; sectionId: string; keys: string; action: string }

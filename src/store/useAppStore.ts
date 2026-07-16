@@ -21,6 +21,8 @@ interface AppState {
   remove: (id: string) => void;
   setTitle: (title: string) => void;
   addSection: (name: string) => void;
+  renameSection: (sectionId: string, name: string) => void;
+  reorderSections: (fromIndex: number, toIndex: number) => void;
   removeSection: (sectionId: string) => void;
   addShortcut: (sectionId: string, keys: string, action: string) => void;
   updateShortcut: (shortcutId: string, keys: string, action: string) => void;
@@ -29,6 +31,17 @@ interface AppState {
   toggleSidebar: () => void;
   toggleEditor: () => void;
   toggleDark: () => void;
+}
+
+function resolveDark(): boolean {
+  try {
+    const stored = localStorage.getItem("theme");
+    if (stored === "dark") return true;
+    if (stored === "light") return false;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  } catch {
+    return false;
+  }
 }
 
 function applyToActive(
@@ -66,7 +79,7 @@ export const useAppStore = create<AppState>()(
       list: [],
       cheatsheets: {},
       activeId: null,
-      darkMode: false,
+      darkMode: resolveDark(),
       sidebarOpen: false,
       editorVisible: false,
       activeSectionId: null,
@@ -91,7 +104,10 @@ export const useAppStore = create<AppState>()(
       },
 
       newCheatsheet: () => {
-        const fresh = createEmptyCheatsheet();
+        let fresh = createEmptyCheatsheet();
+        while (get().cheatsheets[fresh.id]) {
+          fresh = createEmptyCheatsheet();
+        }
         set((s) => ({
           cheatsheets: { ...s.cheatsheets, [fresh.id]: fresh },
           list: [...s.list, { id: fresh.id, title: fresh.title, updatedAt: Date.now() }],
@@ -149,6 +165,15 @@ export const useAppStore = create<AppState>()(
 
       addSection: (name) => set((s) => applyToActive(s, { type: "ADD_SECTION", name })),
 
+      renameSection: (sectionId, name) => {
+        const trimmed = name.trim();
+        if (!trimmed) return;
+        set((s) => applyToActive(s, { type: "RENAME_SECTION", sectionId, name: trimmed }));
+      },
+
+      reorderSections: (fromIndex, toIndex) =>
+        set((s) => applyToActive(s, { type: "REORDER_SECTIONS", fromIndex, toIndex })),
+
       removeSection: (sectionId) =>
         set((s) => {
           const result = applyToActive(s, { type: "REMOVE_SECTION", sectionId });
@@ -176,13 +201,13 @@ export const useAppStore = create<AppState>()(
       toggleEditor: () => set((s) => ({ editorVisible: !s.editorVisible })),
 
       toggleDark: () =>
-        set((s) => {
-          const darkMode = !s.darkMode;
+        set(() => {
+          const next = !document.documentElement.classList.contains("dark");
           try {
-            localStorage.setItem("theme", darkMode ? "dark" : "light");
-            document.documentElement.classList.toggle("dark", darkMode);
+            localStorage.setItem("theme", next ? "dark" : "light");
+            document.documentElement.classList.toggle("dark", next);
           } catch (e) {}
-          return { darkMode };
+          return { darkMode: next };
         }),
     }),
     {
@@ -192,7 +217,6 @@ export const useAppStore = create<AppState>()(
         list: s.list,
         cheatsheets: s.cheatsheets,
         activeId: s.activeId,
-        darkMode: s.darkMode,
       }),
     },
   ),

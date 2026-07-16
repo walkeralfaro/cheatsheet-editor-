@@ -1,17 +1,27 @@
-import { Navigate } from "react-router";
+import { useEffect } from "react";
+import { useParams } from "react-router";
 import { useAppStore } from "../store/useAppStore";
 import Toolbar from "../components/Toolbar";
 import EditorPanel from "../components/EditorPanel";
 import LivePreview from "../components/LivePreview";
+import NotFound from "./NotFound";
 
 export default function CheatsheetRoute() {
-  const id = useAppStore((s) => s.activeId);
-  const active = useAppStore((s) => (s.activeId ? s.cheatsheets[s.activeId] : null));
+  const { id: paramId } = useParams();
+  const cheatsheet = useAppStore((s) => (paramId ? s.cheatsheets[paramId] : null));
+  const activeId = useAppStore((s) => s.activeId);
+  const switchTo = useAppStore((s) => s.switchTo);
   const editorVisible = useAppStore((s) => s.editorVisible);
   const setActiveSection = useAppStore((s) => s.setActiveSection);
 
-  if (!id || !active) {
-    return <Navigate to="/" replace />;
+  useEffect(() => {
+    if (cheatsheet && activeId !== paramId) {
+      switchTo(paramId as string);
+    }
+  }, [cheatsheet, paramId, activeId, switchTo]);
+
+  if (!cheatsheet) {
+    return <NotFound />;
   }
 
   return (
