@@ -17,12 +17,12 @@ export default function NotFound() {
         >
           Abrir editor
         </Link>
-        <a
-          href="/"
+        <Link
+          to="/"
           className="rounded-lg border border-border px-5 py-2.5 font-semibold text-text transition hover:border-primary"
         >
           Ir a la landing
-        </a>
+        </Link>
       </div>
     </div>
   );

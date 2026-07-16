@@ -1,8 +1,9 @@
-import { Routes, Route, Outlet, useNavigate } from "react-router";
+import { Routes, Route, Outlet, useNavigate, Link } from "react-router";
 import { useEffect } from "react";
 import CheatsheetSidebar from "./components/CheatsheetSidebar";
 import CheatsheetRoute from "./routes/CheatsheetRoute";
 import EditorEntry from "./routes/EditorEntry";
+import Landing from "./routes/Landing";
 import NotFound from "./routes/NotFound";
 import { useAppStore } from "./store/useAppStore";
 
@@ -36,14 +37,13 @@ function Shell() {
   return (
     <main className="flex h-dvh flex-col bg-surface">
       <header className="no-print flex items-center justify-between border-b border-border bg-surface px-6 py-3">
-        <button
-          type="button"
-          onClick={() => (window.location.href = "/")}
-          className="cursor-pointer text-lg font-semibold text-text transition-colors hover:text-primary"
+        <Link
+          to="/"
+          className="text-lg font-semibold text-text transition-colors hover:text-primary"
           title="Ir a la página de inicio"
         >
           Cheatsheet Editor
-        </button>
+        </Link>
       </header>
       <CheatsheetSidebar onNew={handleNew} />
       {!sidebarOpen ? null : (
@@ -69,6 +69,7 @@ function Shell() {
 export default function App() {
   return (
     <Routes>
+      <Route index element={<Landing />} />
       <Route element={<Shell />}>
         <Route path="editor" element={<EditorEntry />} />
         <Route path="cheatsheet/:id" element={<CheatsheetRoute />} />
